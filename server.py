@@ -1,5 +1,6 @@
 from flask import Flask, request
 import time
+import datetime
 
 app = Flask(__name__)
 messages=[
@@ -12,9 +13,15 @@ password_storage = {
     "Mary": "4444"
 }
 
-@app.route("/")
+
+@app.route("/status")
 def status_method():
-    return "Current time on server " + str(time.time())
+    return {
+		"status":True,
+		"datetime": datetime.datetime.now().strftime("%Y.%M.%d %H:%m:%S"),
+		"messages_count":len(messages),
+		"users_count": len(password_storage)
+	}
 
 @app.route("/send", methods=["POST"])
 def send_method():
@@ -54,4 +61,6 @@ def messages_method():
     messages_after = [message for message in messages if message["time"] > after]
     return {"messages":messages_after}
 
-app.run()
+
+if __name__ == "__main__":
+	app.run()
